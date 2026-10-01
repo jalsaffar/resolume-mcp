@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 Private MCP server for Resolume Arena / Avenue control over **REST, WebSocket, and OSC**.
-Published as `drohi-r/resolume-mcp`.
+Forked to `jalsaffar/resolume-mcp` (origin) from `drohi-r/resolume-mcp` (upstream).
 
 See `../CLAUDE.md` for the shared MCP conventions and `AGENTS.md` for the short rule list.
 
