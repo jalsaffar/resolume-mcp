@@ -118,3 +118,13 @@ Scope note:
 - Selected layergroup and group-column endpoints are still not exposed on this build:
   - `/api/v1/composition/layergroups/selected`
   - `/api/v1/composition/layergroups/{group}/columns/{column}`
+
+## 2026-10-09 — opening a SOURCE (generator / NDI / capture) into a clip, validated on Arena 7.28.1
+
+- The body must be `source:///video/<source name>` with spaces percent-encoded (`%20`; parentheses may stay literal or be
+  encoded). `<source name>` is the `name` from `GET /sources`, NOT the `idstring`. Success is **204**; a bare name, the idstring,
+  or any other scheme returns **200 and loads nothing** (the clip stays `Empty`), so always re-read the clip.
+- NDI streams are listed under category `NDI Servers` once the sender is on the network, e.g. Depence 4.1's Camera Video
+  Source with NDI Output: name `5090PC (Depence  Camera Seletor 1)` (two spaces). `source:///video/5090PC%20(Depence%20%20Camera%20Seletor%201)`
+  loaded it at 1024x576; `connect` then showed it.
+- Rename a clip with `PUT /composition/layers/{l}/clips/{c}` body `{"name":{"value":"…"}}` (204).
