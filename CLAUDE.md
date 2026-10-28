@@ -2,8 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Private MCP server for Resolume Arena / Avenue control over **REST, WebSocket, and OSC**.
-Forked to `jalsaffar/resolume-mcp` (origin) from `drohi-r/resolume-mcp` (upstream).
+MCP server for Resolume Arena / Avenue control over **REST, WebSocket, and OSC**. **Public** fork
+`jalsaffar/resolume-mcp` (origin, push here) of `drohi-r/resolume-mcp` (upstream, read-only); never
+commit secrets or personal data. Last synced with upstream 2026-10-28 (their 2026-10-12 merge:
+safety gates, transport rework, all 209 tools described, CI, 259 tests).
+
+## Safety gate (since the 2026-10-28 upstream sync)
+
+Twenty destructive tools (clear, disconnect, remove, new/open composition, close deck, Advanced
+Output restore) refuse unless called with `confirm_destructive=True`. The generic `rest_*`,
+`websocket_*`, `set_param`, `trigger_param`, `trigger_deck_action` and `osc_send` tools apply the
+same gate when the path matches a known-destructive pattern (REST DELETE, `clear`, `disconnect-all`,
+`/composition/new`, `/composition/open`, deck close, `connect` false). Pass the flag only after the
+user has confirmed; never add it by default inside a wrapper. Every tool carries
+`readOnlyHint` / `destructiveHint` annotations. The registered `resolume` server runs from this
+directory, so a Claude restart is needed before a merge here reaches the live tools.
 
 See `../CLAUDE.md` for the shared MCP conventions and `AGENTS.md` for the short rule list.
 
@@ -31,8 +44,9 @@ uv run python -m resolume_mcp.server
 
 ### Three transports, three jobs
 
-REST is request/response and is the default. WebSocket carries subscriptions (`subscribe_*` /
-`unsubscribe_*` tool families) for live parameter state. OSC is fire-and-forget. Picking the wrong
+REST is request/response and the default for every read. WebSocket is bounded (opened per call,
+closed after) and carries real subscriptions (`subscribe_*` / `unsubscribe_*` tool families) for
+live parameter state. OSC is fire-and-forget. Picking the wrong
 one produces a tool that appears to work but never reflects live changes — match the transport to
 whether the caller needs confirmation or a stream.
 
